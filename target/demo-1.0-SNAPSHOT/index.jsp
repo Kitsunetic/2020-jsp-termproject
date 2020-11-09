@@ -6,7 +6,11 @@
     <title>Hello World</title>
 </head>
 <body>
-Hello World!!
-<%="Hello World!!"%>
+Hello World!!<br><br>
+<%="Hello World!!"%><br>
+hi<br>
+<img src="img/amu.png" />
+<br>
+<a href="">Download</a>
 </body>
 </html>
