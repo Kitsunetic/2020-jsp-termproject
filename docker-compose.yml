@@ -1,0 +1,33 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+volumes:
+  mariadb:
+
+networks:
+  jspnet:
+
+services:
+  db:
+    image: mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    volumes:
+      - mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=86528652
+      - MYSQL_PASSWORD=86528652
+      - MYSQL_DATABASE=jsp
+      - MYSQL_USER=jsp
+    networks:
+      - jspnet
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+    restart: unless-stopped
+    ports:
+      - 52601:8080
+    networks:
+      - jspnet
