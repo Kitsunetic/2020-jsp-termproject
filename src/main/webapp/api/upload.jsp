@@ -15,7 +15,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    String uploadPath = request.getSession().getServletContext().getRealPath("/uploadFiles");
+    //String uploadPath = request.getSession().getServletContext().getRealPath("/uploadFiles");
+    String uploadPath = "/g/pds";
+
     int maxSize = 1024 * 1024 * 10;
     MultipartRequest multi = new MultipartRequest(request, uploadPath, maxSize, "utf-8", new DefaultFileRenamePolicy());
 
