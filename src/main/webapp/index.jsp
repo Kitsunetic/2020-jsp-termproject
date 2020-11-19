@@ -11,6 +11,6 @@ Hello World!!<br><br>
 hi<br>
 <img src="img/amu.png" />
 <br>
-<a href="./download.jsp">Download</a>
+<a href="api/download.jsp">Download</a>
 </body>
 </html>
