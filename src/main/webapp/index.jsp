@@ -1,16 +1,15 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
     <title>Hello World</title>
+    <link rel="stylesheet" type="text/css" href="css/loginForm.css"/>
+    <%@include file="html/bootstrap4.html" %>
 </head>
 <body>
-Hello World!!<br><br>
-<%="Hello World!!"%><br>
-hi<br>
-<img src="img/amu.png" />
-<br>
-<a href="api/download.jsp">Download</a>
+
+<%@include file="html/loginForm.html" %>
+
 </body>
 </html>
