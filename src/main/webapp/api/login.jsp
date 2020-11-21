@@ -39,14 +39,14 @@
         out.print("name: " + id + "<br>");
         out.print("pw: " + pw + "<br>");
 
-        String sql = "select _id from user where name='" + id + "' and password='" + pw_enc + "'";
+        String sql = "select _id, name from user where name='" + id + "' and password='" + pw_enc + "'";
         out.print("pw enc: " + pw_enc + "<br>");
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         if (rs.next()) {
-            String _id = rs.getString("_id");
-            session.setAttribute("_id", _id);
+            session.setAttribute("_id", rs.getString("_id"));
+            session.setAttribute("name", rs.getString("name"));
             out.print("Login!!");
         } else {
             out.print("No User or worng password!!");
