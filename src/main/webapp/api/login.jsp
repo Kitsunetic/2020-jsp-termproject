@@ -8,14 +8,6 @@
 <%@ page import="db.Encryption" %>
 <%@ page import="java.sql.ResultSet" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Login test</title>
-</head>
-<body>
-</body>
-</html>
-
 
 <%
     // TODO: originated_from(기존 URL)을 받아서 redirect를 할지, 말지 결정(REST-API이냐, 그냥 접속이냐)
@@ -54,4 +46,6 @@
     } catch (SQLException throwables) {
         throwables.printStackTrace();
     }
+
+    response.sendRedirect("../");
 %>

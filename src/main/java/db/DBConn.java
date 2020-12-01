@@ -14,13 +14,14 @@ public class DBConn {
                 // There is no need to load driver manually from JDBC API4.0
                 // Class.forName("com.mysql.jdbc.Driver");
 
-                String url = "jdbc:mysql://localhost:56200/jsp";
-                String user = "jsp";
+                String url = "jdbc:mysql://localhost:52602/jsp";
+                String user = "kitsune";
                 String password = "86528652";
 
+                Class.forName("org.mariadb.jdbc.Driver");
                 conn = DriverManager.getConnection(url, user, password);
                 if (conn != null) break;
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
