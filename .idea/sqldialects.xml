@@ -2,6 +2,6 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/src/main/webapp/api/login.jsp" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/main/webapp/testDB.jsp" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/webapp/api/upload.jsp" dialect="GenericSQL" />
   </component>
 </project>

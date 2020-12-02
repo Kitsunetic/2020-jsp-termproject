@@ -23,7 +23,6 @@
             try {
                 Statement stmt = conn.createStatement();
                 String sql = "select * from user";
-                stmt.executeQuery(sql);
                 ResultSet rs = stmt.executeQuery(sql);
 
                 if (rs.next()) {
