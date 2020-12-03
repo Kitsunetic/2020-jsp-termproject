@@ -99,11 +99,11 @@ h2.active {
     transition: all 0.3s ease-in-out;
 }
 
-input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
+.login-button:hover, .login-button:hover, .login-button:hover {
     background-color: #39ace7;
 }
 
-input[type=button]:active, input[type=submit]:active, input[type=reset]:active {
+.login-button:active, .login-button:active, .login-button:active {
     -moz-transform: scale(0.95);
     -webkit-transform: scale(0.95);
     -o-transform: scale(0.95);
@@ -172,6 +172,6 @@ input[type=button]:active, input[type=submit]:active, input[type=reset]:active {
     width: 60%;
 }
 
-#loginButton {
+#btn-login {
     cursor: pointer;
 }

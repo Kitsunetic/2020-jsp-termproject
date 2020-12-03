@@ -21,15 +21,21 @@
 <!-- Login Form -->
 <div class="container pt-md-5 pt-sm-2">
     <div class="text-center">
-        <h2><b>Login Form</b></h2>
+        <h2><b></b></h2>
     </div>
 
     <div class="row align-items-center justify-content-center">
         <div id="formContent" class="p-3">
             <form action="api/login.jsp" method="post">
-                <input type="text" id="login" class="loginform-input" name="id" placeholder="Login">
-                <input type="password" id="password" class="loginform-input" name="pw" placeholder="Password">
-                <input type="submit" id="loginButton" class="login-button" value="Login">
+                <input type="text" id="login" class="loginform-input" name="id" placeholder="아이디">
+                <input type="password" id="password" class="loginform-input" name="pw" placeholder="비밀번호">
+                <div class="my-2"></div>
+                <!--input type="submit" id="loginButton" class="login-button" value="로그인"-->
+                <div class="custom-control-inline w-100">
+                    <input type="submit" id="btn-login" class="btn btn-primary w-50" value="로그인">
+                    <div class="mx-2"></div>
+                    <input type="submit" id="btn-signin" class="btn btn-warning w-50" value="회원가입">
+                </div>
             </form>
         </div>
     </div>
@@ -44,7 +50,7 @@
     })
     $('#password').on('keypress', function (e) {
         if(e.which == 13) {
-            var btn_login = document.getElementById('loginButton')
+            var btn_login = document.getElementById('btn-login')
             btn_login.click()
         }
     })

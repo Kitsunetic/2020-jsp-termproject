@@ -61,7 +61,7 @@
         <b>
             <%=original_name%>
         </b>
-        <button id="btn-download" class="btn btn-outline-primary ml-4">Download</button>
+        <button id="btn-download" class="btn btn-outline-primary ml-4">다운로드</button>
         <iframe id="downloader" style="display: none"></iframe>
     </div>
     <div class="mt-2 mr-5">
@@ -74,7 +74,7 @@
 
     <img src="img/xjd.png">
     <div class="my-5"></div>
-    <b style="color: gray">File not exists ... T _ T</b>
+    <b style="color: gray">파일이 텅 비었 ... ㅠ _ T</b>
 
     <%}%>
 </div>

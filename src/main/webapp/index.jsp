@@ -16,56 +16,25 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="./index.jsp">FileCoder</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target색="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="container" style="max-width: 600px">
-            <input id="idbox" type="text" class="form-control w-100" placeholder="Search your file...">
+            <input id="idbox" type="text" class="form-control w-100" placeholder="파일 키로 검색">
         </div>
-        <button id="btn-login" class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit">Login</button>
-        <button id="btn-signup" class="btn btn-warning my-2 my-sm-0" type="submit">Sign Up</button>
+        <button id="btn-login" class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit">로그인</button>
+        <button id="btn-signup" class="btn btn-warning my-2 my-sm-0" type="submit">회원가입</button>
     </div>
 </nav>
 
-<%-- Login Form --%>
-<%
-    if (alreadyLoggedIn) {
-%>
-<div class="container pt-md-5 pt-sm-2">
-    <div class="float-right" style="max-width: 1000px">
-        <button id="logout-button" class="btn btn-secondary float-right">Logout</button>
-    </div>
-</div>
-<%
-} else {
-%>
-<div class="container pt-md-5 pt-sm-2">
-    <div class="text-center">
-        <h2><b>Login</b></h2>
-    </div>
-
-    <div class="row align-items-center justify-content-center">
-        <div id="formContent" class="p-3">
-            <form action="api/login.jsp" method="post">
-                <input type="text" id="login" class="loginform-input" name="id" placeholder="Login">
-                <input type="password" id="password" class="loginform-input" name="pw" placeholder="Password">
-                <input type="submit" id="loginButton" class="login-button" value="Login">
-            </form>
-        </div>
-    </div>
-</div>
-<%
-    }
-%>
-
 <!-- Padding -->
-<div class="py-5"></div>
+<div style="height: 25vh"></div>
 
-<!-- Upload Form -->
-<div class="container" style="max-width: 1000px">
+<!-- Alert -->
+<%--div class="container" style="max-width: 1000px">
     <div class="mb-2"></div>
     <div id="popup-zone" class="mb-1">
         <%
@@ -116,13 +85,15 @@
             }
         %>
     </div>
-</div>
-<div class="container" style="max-width: 1000px">
+</div--%>
+
+<!-- Upload Form -->
+<div class="container" style="max-width: 700px">
     <form id="upload-form" action="./api/upload.jsp" method="post" enctype="multipart/form-data">
         <div class="input-group">
             <div id="file-pool" class="custom-file">
                 <input type="file" class="custom-file-input my-file-input" id="input-file-0" name="file">
-                <label class="custom-file-label" for="input-file-0">Choose File</label>
+                <label class="custom-file-label" for="input-file-0">파일을 업로드하고 키로 다운로드 하세요</label>
             </div>
             <!--div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="button">-</button>
@@ -132,16 +103,43 @@
         <div class="float-right">
             <div class="input-group pt-2 float-right" style="max-width: 500px">
                 <input type="text" class="form-control" name="file_id"
-                       placeholder="File Access Key ..." maxlength="36">
+                       placeholder="파일 접근 키" maxlength="36">
                 <div class="input-group-append">
-                    <input type="submit" id="upload-button" class="btn btn-outline-secondary" value="Upload File">
+                    <input type="submit" id="upload-button" class="btn btn-outline-secondary" value="파일 업로드">
                 </div>
             </div>
         </div>
     </form>
 </div>
 
-<script src="./js/index.js"></script>
+<script>
+    // Logout button
+    $('#logout-button').on('click', function () {
+        window.location.href = './api/logout.jsp'
+    })
+
+    // File choose box
+    $("#input-file-0").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    // login + signup button
+    $('#btn-login').on('click', function () {
+        window.location.href = './loginForm.jsp'
+    })
+    $('#btn-signup').on('click', function () {
+        window.location.href = './signUpForm.jsp'
+    })
+
+    // filekey search textbox
+    $('#idbox').on('keypress', function (e) {
+        if (e.which == 13) {
+            var filekey = $('#idbox').val()
+            window.location.href = 'fileForm.jsp?q=' + encodeURI(filekey)
+        }
+    })
+</script>
 
 </body>
 </html>
