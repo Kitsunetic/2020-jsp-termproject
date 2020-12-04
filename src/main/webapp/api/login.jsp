@@ -19,19 +19,13 @@
     // TODO: login 정보에 잘못된 문자 등이 포함되었는지 확인
 
     // DB 접속
-    Connection conn = DBConn.getConnection();
-    if (conn == null) {
-        out.print("Cannot connect to database!!");
-        return;
-    }
-
-    try {
+    try (Connection conn = DBConn.getConnection()) {
         // SHA5 변환 / id;pw 맞는 유저가 있는지 확인
         String pw_enc = Encryption.sha256(pw);
         out.print("name: " + id + "<br>");
         out.print("pw: " + pw + "<br>");
 
-        String sql = "select _id, name from user where name='" + id + "' and password='" + pw_enc + "'";
+        String sql = "select _id, name, nickname from user where name='" + id + "' and password='" + pw_enc + "'";
         out.print("pw enc: " + pw_enc + "<br>");
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -39,6 +33,7 @@
         if (rs.next()) {
             session.setAttribute("_id", rs.getString("_id"));
             session.setAttribute("name", rs.getString("name"));
+            session.setAttribute("nickname", rs.getString("nickname"));
             out.print("Login!!");
         } else {
             out.print("No User or worng password!!");
