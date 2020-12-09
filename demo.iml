@@ -47,5 +47,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.6.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-engine:1.6.2" level="project" />
     <orderEntry type="library" name="mariadb-java-client-2.7.0" level="project" />
+    <orderEntry type="library" name="core" level="project" />
   </component>
 </module>
