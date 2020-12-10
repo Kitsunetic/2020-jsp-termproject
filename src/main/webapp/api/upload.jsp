@@ -98,13 +98,13 @@
         conn.commit();
 
         if (noFile) {
-            response.sendRedirect("../index.jsp?result=403");
+            response.sendRedirect("../fileFailed.jsp");
         } else {
-            response.sendRedirect("../index.jsp?result=200&file_id=" + file_id);
+            session.setAttribute("upload", 1);
+            response.sendRedirect("../fileForm.jsp?q=" + file_id);
         }
     } catch (SQLException throwables) {
         throwables.printStackTrace();
-        response.sendRedirect("../index.jsp?result=404");
+        response.sendRedirect("../fileFailed.jsp");
     }
 %>
-./download.jsp?q=
