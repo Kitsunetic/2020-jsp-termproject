@@ -1,11 +1,44 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="db.DBConn" %>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="javax.xml.transform.Result" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="java.util.ArrayList" %>
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%
     boolean alreadyLoggedIn = session.getAttribute("_id") != null;
+    int _id = -1;
+    int numFiles = 0;
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<Integer> fileSizes = new ArrayList<>();
+    ArrayList<String> fileCodes = new ArrayList<>();
+
+    if (alreadyLoggedIn) {
+        _id = Integer.parseInt((String) session.getAttribute("_id"));
+        try (Connection conn = DBConn.getConnection()) {
+            String sql = "select file_name, original_name, file_size, fi.name as file_code from items as i " +
+                    "left join file_id as fi on i.file_id = fi._id " +
+                    "where owner = ? " +
+                    "order by original_name";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, _id);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                fileNames.add(rs.getString("file_name"));
+                fileSizes.add(rs.getInt("file_size"));
+                fileCodes.add(rs.getString("file_code"));
+            }
+            numFiles = fileNames.size();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 %>
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
     <title>Login or Upload File</title>
@@ -14,78 +47,10 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="./index.jsp">FileCoder</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target색="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <div class="container" style="max-width: 600px">
-            <input id="idbox" type="text" class="form-control w-100" placeholder="파일 키로 검색">
-        </div>
-        <button id="btn-login" class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit">로그인</button>
-        <button id="btn-signup" class="btn btn-warning my-2 my-sm-0" type="submit">회원가입</button>
-    </div>
-</nav>
+<%@ include file="navbar.jsp" %>
 
 <!-- Padding -->
 <div style="height: 25vh"></div>
-
-<!-- Alert -->
-<%--div class="container" style="max-width: 1000px">
-    <div class="mb-2"></div>
-    <div id="popup-zone" class="mb-1">
-        <%
-            String result = request.getParameter("result");
-            if (result != null) {
-                if (result.equals("200")) { %>
-        <div class="alert alert-success fade show" role="alert200">
-            <strong>Suceess!!</strong> Upload Succeeded.<br>
-            <%
-                String file_id = request.getParameter("file_id");
-                out.print("File ID: ");
-                out.println(file_id);
-            %>
-            <button type="button" class="close" data-dismiss="alert200" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <%} else if (result.equals("400")) {%>
-        <div class="alert alert-danger fade show" role="alert400">
-            <strong>Failed!!</strong> File ID is wrong.
-            <button type="button" class="close" data-dismiss="alert400" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <%} else if (result.equals("401")) {%>
-        <div class="alert alert-danger fade show" role="alert401">
-            <strong>Failed!!</strong> File ID already exists!!
-            <button type="button" class="close" data-dismiss="alert401" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <%} else if (result.equals("403")) {%>
-        <div class="alert alert-danger fade show" role="alert403">
-            <strong>Failed!!</strong> No File!!
-            <button type="button" class="close" data-dismiss="alert403" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <%} else if (result.equals("404")) {%>
-        <div class="alert alert-danger fade show" role="alert404">
-            <strong>Failed!!</strong> Unknown Error!!
-            <button type="button" class="close" data-dismiss="alert404" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <%
-                }
-            }
-        %>
-    </div>
-</div--%>
 
 <!-- Upload Form -->
 <div class="container" style="max-width: 700px">
@@ -112,6 +77,41 @@
     </form>
 </div>
 
+<% if (alreadyLoggedIn && numFiles > 0) { %>
+<!-- File List -->
+<div class="py-5"></div>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">파일 이름</th>
+            <th scope="col">파일 코드</th>
+            <th scope="col" style="width: 128px">파일 용량</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+            for (int i = 0; i < numFiles; i++) {
+        %>
+        <tr>
+            <th>
+                <a href="api/downloadw.jsp?q=<%=fileCodes.get(i)%>" style="color: black"><%=fileNames.get(i)%></a>
+            </th>
+            <th>
+                <%=fileCodes.get(i)%>
+            </th>
+            <th style="width: 128px" class="text-right">
+                <%=fileSizes.get(i)%>
+            </th>
+        </tr>
+        <%
+            }
+        %>
+        </tbody>
+    </table>
+</div>
+<% }%>
+
 <script>
     // Logout button
     $('#logout-button').on('click', function () {
@@ -130,6 +130,9 @@
     })
     $('#btn-signup').on('click', function () {
         window.location.href = './signUpForm.jsp'
+    })
+    $('#btn-logout').on('click', function () {
+        window.location.href = './api/logout.jsp'
     })
 
     // filekey search textbox
