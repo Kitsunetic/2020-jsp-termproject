@@ -3,13 +3,42 @@
 <%@ page import="db.DBConn" %>
 <%@ page import="java.sql.PreparedStatement" %>
 <%@ page import="java.sql.ResultSet" %>
+<%@ page import="javax.xml.transform.Result" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="java.util.ArrayList" %>
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%
     boolean alreadyLoggedIn = session.getAttribute("_id") != null;
+    int _id = -1;
+    int numFiles = 0;
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<Integer> fileSizes = new ArrayList<>();
+    ArrayList<String> fileCodes = new ArrayList<>();
+
+    if (alreadyLoggedIn) {
+        _id = Integer.parseInt((String) session.getAttribute("_id"));
+        try (Connection conn = DBConn.getConnection()) {
+            String sql = "select file_name, original_name, file_size, fi.name as file_code from items as i " +
+                    "left join file_id as fi on i.file_id = fi._id " +
+                    "where owner = ? " +
+                    "order by original_name";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, _id);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                fileNames.add(rs.getString("file_name"));
+                fileSizes.add(rs.getInt("file_size"));
+                fileCodes.add(rs.getString("file_code"));
+            }
+            numFiles = fileNames.size();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 %>
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
     <title>Login or Upload File</title>
@@ -18,7 +47,7 @@
 <body>
 
 <!-- Navbar -->
-<%@ include file="navbar.jsp"%>
+<%@ include file="navbar.jsp" %>
 
 <!-- Padding -->
 <div style="height: 25vh"></div>
@@ -47,6 +76,41 @@
         </div>
     </form>
 </div>
+
+<% if (alreadyLoggedIn && numFiles > 0) { %>
+<!-- File List -->
+<div class="py-5"></div>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">파일 이름</th>
+            <th scope="col">파일 코드</th>
+            <th scope="col" style="width: 128px">파일 용량</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+            for (int i = 0; i < numFiles; i++) {
+        %>
+        <tr>
+            <th>
+                <a href="api/downloadw.jsp?q=<%=fileCodes.get(i)%>" style="color: black"><%=fileNames.get(i)%></a>
+            </th>
+            <th>
+                <%=fileCodes.get(i)%>
+            </th>
+            <th style="width: 128px" class="text-right">
+                <%=fileSizes.get(i)%>
+            </th>
+        </tr>
+        <%
+            }
+        %>
+        </tbody>
+    </table>
+</div>
+<% }%>
 
 <script>
     // Logout button

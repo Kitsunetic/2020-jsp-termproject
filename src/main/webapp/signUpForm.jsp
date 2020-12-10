@@ -71,39 +71,6 @@
     }
     $('#txt-pw').change(onPasswordChanged)
     $('#txt-pw2').change(onPasswordChanged)
-
-    /*
-    const onSubmit = function () {
-        let nickname = $('#txt-nickname').val()
-        let id = $('#txt-id').val()
-        let pw = $('#txt-pw').val()
-
-        const f = document.createElement('form')
-        f.setAttribute('method', 'post')
-        f.setAttribute('action', 'api/signup.jsp')
-        document.body.appendChild(f)
-
-        const i_nickname = document.createElement('input')
-        i_nickname.setAttribute('type', 'hidden')
-        i_nickname.setAttribute('name', 'nickname')
-        i_nickname.setAttribute('value', nickname)
-
-        const i_id = document.createElement('input')
-        i_id.setAttribute('type', 'hidden')
-        i_id.setAttribute('name', 'nickname')
-        i_id.setAttribute('value', id)
-
-        const i_pw = document.createElement('input');
-        i_pw.setAttribute('type', 'hidden')
-        i_pw.setAttribute('name', 'nickname')
-        i_pw.setAttribute('value', pw)
-
-        f.appendChild(i_nickname)
-        f.appendChild(i_id)
-        f.appendChild(i_pw)
-    }
-    $('#btn-submit').click(onSubmit)
-     */
 </script>
 
 </body>
