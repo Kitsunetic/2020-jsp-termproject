@@ -9,7 +9,7 @@
 <%
     String q = request.getParameter("q");
 
-    ArrayList<Integer> itemIds = new ArrayList<>();
+    ArrayList<Integer> fileCodes = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<Long> fileSizes = new ArrayList<>();
 
@@ -26,7 +26,7 @@
         ResultSet rs = st.executeQuery();
 
         while (rs.next()) {
-            itemIds.add(rs.getInt("_id"));
+            fileCodes.add(rs.getInt("_id"));
             fileNames.add(rs.getString("file_name"));
             fileSizes.add(rs.getLong("file_size"));
         }
@@ -34,8 +34,8 @@
         throwables.printStackTrace();
     }
 
-    boolean fileExist = itemIds.size() > 0;
-    boolean onlyOneFile = itemIds.size() == 1;
+    boolean fileExist = fileCodes.size() > 0;
+    boolean onlyOneFile = fileCodes.size() == 1;
 
     boolean alreadyLoggedIn = session.getAttribute("_id") != null;
     boolean uploadSucceeded = session.getAttribute("upload") != null;
@@ -71,6 +71,9 @@
 <body>
 
 <%@ include file="navbar.jsp" %>
+<script>
+    $('#idbox').val('<%=q%>')
+</script>
 
 <div class="container text-center justify-content-center align-content-center py-md-5">
     <% if (fileExist) { %>
@@ -131,7 +134,7 @@
 
     <script>
         $('#btn-download').click(function () {
-            document.getElementById('downloader').src = 'api/downloadw.jsp?q=<%=q%>'
+            document.getElementById('downloader').src = 'api/download.jsp?q=<%=fileCodes.get(0)%>'
         })
         $('#btn-copy-url').click(function () {
             let txt = document.getElementById('txt-copy-url')
@@ -143,7 +146,7 @@
         $(document).ready(function () {
             let host = window.location.hostname
             let port = window.location.port
-            let url = "http://" + host + ":" + port + "/demo_war/api/downloadw.jsp?q=<%=q%>"
+            let url = "http://" + host + ":" + port + "/demo_war/api/download.jsp?q=<%=fileCodes.get(0)%>"
             $('#txt-copy-url').val(url)
 
             // Set QRCode
@@ -151,7 +154,7 @@
                 url: './api/getQR.jsp?q=' + url,
                 success: function (data) {
                     let imgqr = $('#img-qr')
-                    imgqr.attr('src', 'data:image/png;base64,' + data)
+                    imgqr.attr('src', data)
                 }
             })
         })
@@ -161,6 +164,10 @@
     <%-- =========================================== --%>
     <%--             파일이 여러개인 경우                --%>
     <%-- =========================================== --%>
+    <div class="pb-2">
+        <h2>File Key: <%=q%></h2>
+    </div>
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -170,16 +177,19 @@
         </tr>
         </thead>
         <tbody>
-        <% for (int i = 0; i < itemIds.size(); i++) { %>
+        <% for (int i = 0; i < fileCodes.size(); i++) { %>
         <tr>
             <th>
-                <%=fileNames.get(i)%>
+                <a href="api/download.jsp?q=<%=fileCodes.get(i)%>" style="color: black">
+                    <%=fileNames.get(i)%>
+                </a>
             </th>
             <th class="col-filesize">
                 <%=StringUtils.fileSizeToString(fileSizes.get(i))%>
             </th>
             <th class="col-qr"><b>
-                <a class="qr" data-toggle="tooltip" data-placement="top" file-id="<%=itemIds.get(i)%>">QR코드</a>
+                <a class="qr" data-toggle="popover-toggle"
+                   title="" file-id="<%=fileCodes.get(i)%>">QR</a>
             </b></th>
         </tr>
         <% } %>
@@ -190,10 +200,17 @@
         $(document).ready(function () {
             let host = window.location.hostname
             let port = window.location.port
-            $('a.qr').each(function (index, item) {
+            let qr = $('.qr')
+            qr.each(function (index, item) {
                 let filfId = item.getAttribute('file-id')
                 let url = 'http://' + host + ':' + port + '/demo_war/api/download.jsp?q=' + filfId
-                item.setAttribute('title', '<img src="./api/getQR.jsp?q=' + url + '"')
+                item.setAttribute('title', '<img src="api/getQR.jsp?q=' + url + '" />')
+            })
+
+            qr.tooltip({
+                animated: 'fade',
+                placement: 'left',
+                html: true
             })
         })
     </script>

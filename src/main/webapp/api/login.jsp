@@ -1,11 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ page import="java.sql.Connection" %>
 <%@ page import="db.DBConn" %>
-<%@ page import="java.sql.Statement" %>
-<%@ page import="java.sql.SQLException" %>
 <%@ page import="utils.Encryption" %>
-<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.sql.*" %>
 
 <%
     // Login 정보 받기
@@ -16,9 +13,11 @@
     try (Connection conn = DBConn.getConnection()) {
         // SHA5 변환 / id;pw 맞는 유저가 있는지 확인
         String pw_enc = Encryption.sha256(pw);
-        String sql = "select _id, name, nickname from user where name='" + id + "' and password='" + pw_enc + "'";
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
+        String sql = "select _id, name, nickname from user where name=? and password=?";
+        PreparedStatement st = conn.prepareStatement(sql);
+        st.setString(1, id);
+        st.setString(2, pw_enc);
+        ResultSet rs = st.executeQuery(sql);
 
         if (rs.next()) {
             session.setAttribute("_id", rs.getString("_id"));

@@ -41,7 +41,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-    <title>Login or Upload File</title>
+    <title>FileCoder</title>
     <%@include file="html/bootstrap4.html" %>
 </head>
 <body>
@@ -108,7 +108,8 @@
         %>
         <tr>
             <th>
-                <a href="api/downloadw.jsp?q=<%=fileCodes.get(i)%>" style="color: black"><%=fileNames.get(i)%>
+                <a href="api/download.jsp?q=<%=fileCodes.get(i)%>" style="color: black">
+                    <%=fileNames.get(i)%>
                 </a>
             </th>
             <th>
@@ -127,10 +128,6 @@
 <% }%>
 
 <script>
-    // Logout button
-    $('#logout-button').on('click', function () {
-        window.location.href = './api/logout.jsp'
-    })
 
     // File choose box
     $("#input-file-0").on("change", function () {
@@ -138,23 +135,9 @@
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
 
-    // login + signup button
-    $('#btn-login').on('click', function () {
-        window.location.href = './loginForm.jsp'
-    })
-    $('#btn-signup').on('click', function () {
-        window.location.href = './signUpForm.jsp'
-    })
-    $('#btn-logout').on('click', function () {
+    // Logout button
+    $('#logout-button').on('click', function () {
         window.location.href = './api/logout.jsp'
-    })
-
-    // filekey search textbox
-    $('#idbox').on('keypress', function (e) {
-        if (e.which == 13) {
-            var filekey = $('#idbox').val()
-            window.location.href = 'fileForm.jsp?q=' + encodeURI(filekey)
-        }
     })
 </script>
 

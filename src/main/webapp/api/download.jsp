@@ -19,7 +19,7 @@
 
 <%
     request.setCharacterEncoding("UTF-8");
-    String q = request.getParameter("q");
+    String q = request.getParameter("q"); // q = file_id._id
     if (q == null || q.length() <= 0) {
         response.setStatus(400);
         return;
@@ -28,16 +28,12 @@
     long file_id = Long.parseLong(q);
 
     // DB에서 q로 검색
-    Connection conn = null;
-    PreparedStatement st = null;
-    ResultSet rs = null;
     String original_name = null;
     String file_name = null;
-    try {
-        conn = DBConn.getConnection();
-        st = conn.prepareStatement("select original_name, file_name from items where _id = ?");
+    try (Connection conn = DBConn.getConnection()) {
+        PreparedStatement st = conn.prepareStatement("select original_name, file_name from items where _id = ?");
         st.setLong(1, file_id);
-        rs = st.executeQuery();
+        ResultSet rs = st.executeQuery();
         if (rs.next()) {
             original_name = rs.getString("original_name");
             file_name = rs.getString("file_name");
@@ -47,13 +43,6 @@
     } catch (SQLException throwables) {
         throwables.printStackTrace();
         response.setStatus(500);
-    } finally {
-        try {
-            if (conn != null) conn.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            response.setStatus(500);
-        }
     }
 
     if (original_name == null || file_name == null) return;

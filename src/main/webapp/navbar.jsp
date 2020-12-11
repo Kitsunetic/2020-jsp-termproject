@@ -22,3 +22,24 @@
         <% } %>
     </div>
 </nav>
+
+<script>
+    // login + signup button
+    $('#btn-login').on('click', function () {
+        window.location.href = './loginForm.jsp'
+    })
+    $('#btn-signup').on('click', function () {
+        window.location.href = './signUpForm.jsp'
+    })
+    $('#btn-logout').on('click', function () {
+        window.location.href = './api/logout.jsp'
+    })
+
+    // filekey search textbox
+    $('#idbox').on('keypress', function (e) {
+        if (e.which == 13) {
+            var filekey = $('#idbox').val()
+            window.location.href = 'fileForm.jsp?q=' + encodeURI(filekey)
+        }
+    })
+</script>
