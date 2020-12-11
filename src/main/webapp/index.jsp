@@ -1,12 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.Connection" %>
-<%@ page import="db.DBConn" %>
 <%@ page import="java.sql.PreparedStatement" %>
 <%@ page import="java.sql.ResultSet" %>
-<%@ page import="javax.xml.transform.Result" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="java.util.ArrayList" %>
-<?xml version="1.0" encoding="UTF-8"?>
+<%@ page import="db.DBConn" %>
+<%@ page import="utils.StringUtils" %>
 
 <%
     boolean alreadyLoggedIn = session.getAttribute("_id") != null;
@@ -38,6 +37,7 @@
     }
 %>
 
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -49,8 +49,21 @@
 <!-- Navbar -->
 <%@ include file="navbar.jsp" %>
 
+
+<%
+    if (session.getAttribute("uploadFailed") != null) {
+        session.removeAttribute("uploadFailed");
+%>
+<!-- Upload Failed Message -->
+<div class="container text-center justify-content-center align-content-center py-md-5">
+    <img src="img/xjd.png">
+    <div class="my-5"></div>
+    <b style="color: gray">파일 업로드에 실패했습니다 ... T _ ㅠ</b>
+</div>
+<% } else {%>
 <!-- Padding -->
 <div style="height: 25vh"></div>
+<% } %>
 
 <!-- Upload Form -->
 <div class="container" style="max-width: 700px">
@@ -95,13 +108,14 @@
         %>
         <tr>
             <th>
-                <a href="api/downloadw.jsp?q=<%=fileCodes.get(i)%>" style="color: black"><%=fileNames.get(i)%></a>
+                <a href="api/downloadw.jsp?q=<%=fileCodes.get(i)%>" style="color: black"><%=fileNames.get(i)%>
+                </a>
             </th>
             <th>
                 <%=fileCodes.get(i)%>
             </th>
             <th style="width: 128px" class="text-right">
-                <%=fileSizes.get(i)%>
+                <%=StringUtils.fileSizeToString(fileSizes.get(i))%>
             </th>
         </tr>
         <%

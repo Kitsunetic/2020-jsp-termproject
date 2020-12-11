@@ -1,11 +1,11 @@
-<%@ page import="com.google.zxing.qrcode.QRCodeWriter" %>
-<%@ page import="com.google.zxing.common.BitMatrix" %>
-<%@ page import="com.google.zxing.BarcodeFormat" %>
-<%@ page import="java.awt.image.BufferedImage" %>
-<%@ page import="com.google.zxing.client.j2se.MatrixToImageWriter" %>
 <%@ page import="javax.imageio.ImageIO" %>
 <%@ page import="java.io.ByteArrayOutputStream" %>
 <%@ page import="java.util.Base64" %>
+<%@ page import="java.awt.image.BufferedImage" %>
+<%@ page import="com.google.zxing.qrcode.QRCodeWriter" %>
+<%@ page import="com.google.zxing.common.BitMatrix" %>
+<%@ page import="com.google.zxing.BarcodeFormat" %>
+<%@ page import="com.google.zxing.client.j2se.MatrixToImageWriter" %>
 <%@ page import="com.google.zxing.WriterException" %>
 
 <%
@@ -30,5 +30,5 @@
         e.printStackTrace();
     }
 
-    out.print(outString);
+    out.print("data:image/png;base64," + outString);
 %>

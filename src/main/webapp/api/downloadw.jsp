@@ -33,7 +33,8 @@
     String file_name = null;
     try {
         conn = DBConn.getConnection();
-        st = conn.prepareStatement("select original_name, file_name from items where file_id = (select _id from file_id where name = ?)");
+        st = conn.prepareStatement("select original_name, file_name from items " +
+                "where file_id = (select _id from file_id where name = ?)");
         st.setString(1, q);
         rs = st.executeQuery();
         if (rs.next()) {

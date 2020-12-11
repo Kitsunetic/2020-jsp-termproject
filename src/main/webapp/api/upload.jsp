@@ -98,13 +98,15 @@
         conn.commit();
 
         if (noFile) {
-            response.sendRedirect("../fileFailed.jsp");
+            session.setAttribute("uploadFailed", 1);
+            response.sendRedirect("../index.jsp");
         } else {
             session.setAttribute("upload", 1);
             response.sendRedirect("../fileForm.jsp?q=" + file_id);
         }
     } catch (SQLException throwables) {
         throwables.printStackTrace();
-        response.sendRedirect("../fileFailed.jsp");
+        session.setAttribute("uploadFailed", 1);
+        response.sendRedirect("../index.jsp");
     }
 %>

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="db.DBConn" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="db.Encryption" %>
+<%@ page import="utils.Encryption" %>
 
 <%
     if (session.getAttribute("_id") != null) {

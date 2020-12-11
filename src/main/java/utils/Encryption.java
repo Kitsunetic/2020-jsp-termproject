@@ -1,5 +1,4 @@
-// https://needjarvis.tistory.com/251
-package db;
+package utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
