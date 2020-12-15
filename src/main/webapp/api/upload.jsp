@@ -78,7 +78,7 @@
             st.setString(4, originalName);
             st.setLong(5, fileSize);
             st.addBatch();
-            st.clearParameters();
+            //st.clearParameters();
 
             noFile = false;
         }

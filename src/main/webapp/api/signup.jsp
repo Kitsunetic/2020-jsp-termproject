@@ -44,7 +44,6 @@
         if (rs.next()) {
             session.setAttribute("_id", rs.getInt(1));
             session.setAttribute("nickname", nickname);
-            session.setAttribute("name", id);
         }
 
         response.sendRedirect("../index.jsp");
