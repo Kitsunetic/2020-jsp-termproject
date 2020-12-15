@@ -13,26 +13,26 @@
     try (Connection conn = DBConn.getConnection()) {
         // SHA5 변환 / id;pw 맞는 유저가 있는지 확인
         String pw_enc = Encryption.sha256(pw);
-        String sql = "select _id, name, nickname from user where name=? and password=?";
+        String sql = "SELECT `_id`, `nickname` FROM `user` WHERE `name`=? AND `password`=?";
         PreparedStatement st = conn.prepareStatement(sql);
         st.setString(1, id);
-        st.setString(2, pw_enc);
-        ResultSet rs = st.executeQuery(sql);
+        st.setString(1, pw_enc);
 
+        ResultSet rs = st.executeQuery();
         if (rs.next()) {
             session.setAttribute("_id", rs.getString("_id"));
-            session.setAttribute("name", rs.getString("name"));
             session.setAttribute("nickname", rs.getString("nickname"));
-            response.sendRedirect("../");
+            response.sendRedirect("../index.jsp");
         } else {
 %>
 <script>
-    alert('로그인에 실패했습니다!!')
-    document.location.href = '../'
+    alert('잘못된 아이디나 비밀번호 입니다.')
+    document.location.href = '../loginForm.jsp'
 </script>
 <%
         }
     } catch (SQLException throwables) {
         throwables.printStackTrace();
+        response.sendRedirect("../sorry.jsp");
     }
 %>
