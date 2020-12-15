@@ -5,15 +5,15 @@
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="db.DBConn" %>
-<%@ page import="utils.StringUtils" %>
 
 <%
     boolean alreadyLoggedIn = session.getAttribute("_id") != null;
     int _id = -1;
-    int numFiles = 0;
-    ArrayList<String> fileNames = new ArrayList<>();
-    ArrayList<Integer> fileSizes = new ArrayList<>();
+    int numFiles = -1;
     ArrayList<String> fileCodes = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileOriginalNames = new ArrayList<>();
+    ArrayList<Integer> fileSizes = new ArrayList<>();
 
     if (alreadyLoggedIn) {
         _id = Integer.parseInt((String) session.getAttribute("_id"));
@@ -26,9 +26,10 @@
             st.setInt(1, _id);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                fileNames.add(rs.getString("file_name"));
-                fileSizes.add(rs.getInt("file_size"));
                 fileCodes.add(rs.getString("file_code"));
+                fileNames.add(rs.getString("file_name"));
+                fileOriginalNames.add(rs.getString("original_name"));
+                fileSizes.add(rs.getInt("file_size"));
             }
             numFiles = fileNames.size();
         } catch (SQLException throwables) {
@@ -41,7 +42,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-    <title>Login or Upload File</title>
+    <title>FileCoder</title>
     <%@include file="html/bootstrap4.html" %>
 </head>
 <body>
@@ -90,45 +91,14 @@
     </form>
 </div>
 
-<% if (alreadyLoggedIn && numFiles > 0) { %>
-<!-- File List -->
+<% if (alreadyLoggedIn && numFiles >= 1) { %>
 <div class="py-5"></div>
 <div class="container">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">파일 이름</th>
-            <th scope="col">파일 코드</th>
-            <th scope="col" style="width: 128px">파일 용량</th>
-        </tr>
-        </thead>
-        <tbody>
-        <%
-            for (int i = 0; i < numFiles; i++) {
-        %>
-        <tr>
-            <th>
-                <a href="api/download.jsp?q=<%=fileCodes.get(i)%>" style="color: black">
-                    <%=fileNames.get(i)%>
-                </a>
-            </th>
-            <th>
-                <%=fileCodes.get(i)%>
-            </th>
-            <th style="width: 128px" class="text-right">
-                <%=StringUtils.fileSizeToString(fileSizes.get(i))%>
-            </th>
-        </tr>
-        <%
-            }
-        %>
-        </tbody>
-    </table>
+    <%@include file="fileTableView.jsp" %>
 </div>
 <% }%>
 
 <script>
-
     // File choose box
     $("#input-file-0").on("change", function () {
         var fileName = $(this).val().split("\\").pop();
