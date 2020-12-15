@@ -22,7 +22,7 @@
     <div class="card bg-light">
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h4 class="card-title mt-3 text-center">로그인</h4>
-            <form action="api/login.jsp" method="post">
+            <form id="form-login">
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
@@ -36,7 +36,7 @@
                     <input name="pw" id="password" class="form-control" placeholder="비밀번호" type="password">
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block">로그인</button>
+                    <button id="btn-login" type="button" class="btn btn-primary btn-block">로그인</button>
                 </div>
             </form>
         </article>
@@ -44,6 +44,33 @@
 </div>
 
 <script>
+    const loginReaction = function (e, xhr, settings) {
+        switch (e.status) {
+            case 200:
+                document.location.href = './index.jsp'
+                break
+            case 401:
+                alert('잘못된 아이디나 비밀번호 입니다.')
+                break
+            default:
+                console.log('Status code:', e.status)
+                document.location.href = './sorry.jsp'
+        }
+    }
+    $('#btn-login').click(function () {
+        let formData = {
+            id: $('#login').val(),
+            pw: $('#password').val()
+        }
+        console.log(formData)
+
+        $.ajax({
+            url: './api/login.jsp',
+            type: 'POST',
+            data: formData,
+            complete: loginReaction
+        })
+    })
     $('#login').on('keypress', function (e) {
         if (e.which === 13) document.getElementById('password').focus()
     })

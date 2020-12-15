@@ -16,7 +16,7 @@
     try (Connection conn = DBConn.getConnection()) {
         // 사용자가 이미 있는지 확인
         {
-            String sql = "select 1 from user where name = ?";
+            String sql = "SELECT 1 FROM user WHERE name = ?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
@@ -32,7 +32,7 @@
         }
 
         // 사용자 insert
-        String sql = "insert into user (name, nickname, password) values (?, ?, ?)";
+        String sql = "INSERT INTO user (name, nickname, password) VALUES (?, ?, ?)";
         PreparedStatement st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         st.setString(1, id);
         st.setString(2, nickname);

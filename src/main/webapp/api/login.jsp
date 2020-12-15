@@ -16,23 +16,20 @@
         String sql = "SELECT `_id`, `nickname` FROM `user` WHERE `name`=? AND `password`=?";
         PreparedStatement st = conn.prepareStatement(sql);
         st.setString(1, id);
-        st.setString(1, pw_enc);
+        st.setString(2, pw_enc);
 
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
             session.setAttribute("_id", rs.getString("_id"));
             session.setAttribute("nickname", rs.getString("nickname"));
-            response.sendRedirect("../index.jsp");
+
+            // API이므로, 렌더링을 지양하고, status로 결과를 return
+            response.setStatus(200);
         } else {
-%>
-<script>
-    alert('잘못된 아이디나 비밀번호 입니다.')
-    document.location.href = '../loginForm.jsp'
-</script>
-<%
+            response.setStatus(401);
         }
     } catch (SQLException throwables) {
         throwables.printStackTrace();
-        response.sendRedirect("../sorry.jsp");
+        response.setStatus(500);
     }
 %>

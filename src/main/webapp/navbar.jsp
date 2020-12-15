@@ -37,7 +37,11 @@ Requirements:
         window.location.href = './signUpForm.jsp'
     })
     $('#btn-logout').on('click', function () {
-        window.location.href = './api/logout.jsp'
+        //window.location.href = './api/logout.jsp'
+        $.ajax({
+            url: './api/logout.jsp',
+            complete: () => document.location.reload()
+        })
     })
 
     // filekey search textbox

@@ -5,6 +5,9 @@
 <%@ page import="db.DBConn" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.concurrent.Callable" %>
+<%@ page import="utils.StringUtils" %>
+<%@ page import="java.awt.image.DataBufferUShort" %>
+<%@ page import="utils.Encryption" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -21,18 +24,22 @@
         return;
     }
 
+    boolean ckFileAuth = multi.getParameter("ck-file-auth") != null;
+    boolean ckFilePassword = multi.getParameter("ck-file-password") != null;
+    String txtFilePassword = multi.getParameter("txt-file-password");
+    String txtFilePasswordEncrypted = ckFilePassword ? Encryption.sha256(txtFilePassword) : null;
+
     Object s_user_id = session.getAttribute("_id");
     int user_id = -1;
     if (s_user_id != null) {
         user_id = Integer.parseInt((String) s_user_id);
     }
 
-    int _id = -1;
-
     // DB 연결
+    int _id = -1; // 파일 키의 아이디
     try (Connection conn = DBConn.getConnection()) {
         // 이미 등록되어있는 file_id인지 확인
-        String sql = "select _id from file_id where name=?";
+        String sql = "SELECT _id FROM file_id WHERE name=?";
         PreparedStatement st = conn.prepareStatement(sql);
         st.setString(1, file_id);
         ResultSet rs = st.executeQuery();
@@ -42,7 +49,7 @@
 
         // file_id 생성
         if (_id != -1) {
-            sql = "insert into file_id (name) values (?)";
+            sql = "INSERT INTO file_id (name) VALUES (?)";
             st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setString(1, file_id);
             st.executeUpdate();
@@ -56,9 +63,9 @@
         }
 
         // items 생성
-        sql = "insert into items " +
-                "(owner, file_id, file_name, original_name, file_size) " +
-                "values (?, ?, ?, ?, ?)";
+        sql = "INSERT INTO items " +
+                "(owner, file_id, file_name, original_name, file_size, owner_only, have_password, password) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         st = conn.prepareStatement(sql);
         boolean noFile = true;
 
@@ -77,17 +84,18 @@
             st.setString(3, fileName);
             st.setString(4, originalName);
             st.setLong(5, fileSize);
+            st.setBoolean(6, ckFileAuth);
+            st.setBoolean(7, ckFilePassword);
+            st.setString(8, txtFilePasswordEncrypted);
             st.addBatch();
-            //st.clearParameters();
 
             noFile = false;
         }
-
         st.executeBatch();
         conn.commit();
 
         assert noFile;
-        
+
         session.setAttribute("upload", 1);
         response.sendRedirect("../fileForm.jsp?q=" + file_id);
     } catch (SQLException throwables) {

@@ -61,8 +61,12 @@
     <div class="my-5"></div>
     <b style="color: gray">파일 업로드에 실패했습니다 ... T _ ㅠ</b>
 </div>
-<% } else {%>
+<% } else if (alreadyLoggedIn) {
+// 이미 로그인했다면 하단의 파일 목록 때문에 상단 padding을 작게 준다.
+%>
 <!-- Padding -->
+<div style="height: 8vh"></div>
+<% } else { %>
 <div style="height: 25vh"></div>
 <% } %>
 
@@ -74,19 +78,33 @@
                 <input type="file" class="custom-file-input my-file-input" id="input-file-0" name="file">
                 <label class="custom-file-label" for="input-file-0">파일을 업로드하고 키로 다운로드 하세요</label>
             </div>
-            <!--div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">-</button>
-            </div-->
         </div>
 
-        <div class="float-right">
-            <div class="input-group pt-2 float-right" style="max-width: 500px">
+        <div class="float-right pt-2 pb-4">
+            <div class="input-group float-right" style="max-width: 300px">
                 <input type="text" class="form-control" name="file_id"
                        placeholder="파일 접근 키" maxlength="36">
                 <div class="input-group-append">
                     <input type="submit" id="upload-button" class="btn btn-outline-secondary" value="파일 업로드">
                 </div>
             </div>
+
+            <% if (alreadyLoggedIn) {
+                // Only for users logged in
+            %>
+            <div class="input-group pt-2 float-right" style="max-width: 500px">
+                <input type="checkbox" class="form-check-inline"
+                       name="ck-file-auth" id="ck-file-auth" value="ckFileAuth">
+                <label class="form-check-label" for="ck-file-auth">나만 볼 수 있음</label>
+                &nbsp;&nbsp;
+                <input type="checkbox" class="form-check-inline"
+                       name="ck-file-password" id="ck-file-password" value="ckFilePassword">
+                <label class="form-check-label" for="ck-file-password">파일 비밀번호 설정</label>
+                &nbsp;&nbsp;
+                <input type="password" class="form-control" maxlength="128"
+                       placeholder="비밀번호" id="txt-file-password" disabled>
+            </div>
+            <% } %>
         </div>
     </form>
 </div>
@@ -99,15 +117,23 @@
 <% }%>
 
 <script>
-    // File choose box
-    $("#input-file-0").on("change", function () {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
+    $(document).ready(function () {
+        // File choose box
+        $("#input-file-0").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
 
-    // Logout button
-    $('#logout-button').on('click', function () {
-        window.location.href = './api/logout.jsp'
+        let ckFilePassword = $('#ck-file-password')
+        ckFilePassword.change(function () {
+            txtFilePassword = $('#txt-file-password')
+            if (ckFilePassword.is(':checked')) {
+                txtFilePassword[0].disabled = false
+            } else {
+                txtFilePassword[0].disabled = true
+                txtFilePassword.val('')
+            }
+        })
     })
 </script>
 
