@@ -16,6 +16,7 @@
 <%@ page import="java.sql.PreparedStatement" %>
 <%@ page import="java.sql.ResultSet" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="utils.Encryption" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -24,19 +25,28 @@
         response.setStatus(400);
         return;
     }
-
-    long file_id = Long.parseLong(q);
+    long fileKey = Long.parseLong(q);
+    String pw = request.getParameter("pw"); // 유저 비밀번호가 아니라 파일 비밀번호임
+    String pw_enc = Encryption.sha256(pw);
 
     // DB에서 q로 검색
     String original_name = null;
     String file_name = null;
+    long owner = -1;
+    boolean owner_only = false;
+    String password = null;
     try (Connection conn = DBConn.getConnection()) {
-        PreparedStatement st = conn.prepareStatement("select original_name, file_name from items where _id = ?");
-        st.setLong(1, file_id);
+        String sql = "select original_name, file_name, owner, owner_only, password from items where _id = ?";
+        PreparedStatement st = conn.prepareStatement(sql);
+        st.setLong(1, fileKey);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
             original_name = rs.getString("original_name");
             file_name = rs.getString("file_name");
+            owner = rs.getLong("owner");
+            if (rs.wasNull()) owner = -1;
+            owner_only = rs.getBoolean("owner_only");
+            password = rs.getString("password");
         } else {
             response.setStatus(404);
         }
@@ -45,7 +55,33 @@
         response.setStatus(500);
     }
 
-    if (original_name == null || file_name == null) return;
+    // 파일 경로 설정 오류
+    if (original_name == null || file_name == null) {
+        response.setStatus(500);
+        return;
+    }
+
+    // 비밀번호 체크
+    if (password != null && !password.equals(pw_enc)) {
+        response.setStatus(403);
+        return;
+    }
+
+    // owner 체크
+    if (owner_only) {
+        Object currentUser_ = session.getAttribute("_id");
+        if (currentUser_ == null) {
+            response.setStatus(500);
+            return;
+        }
+
+        // owner가 다름
+        long currentUser = (Long) currentUser_;
+        if (owner != -1 && owner != currentUser) {
+            response.setStatus(403);
+            return;
+        }
+    }
 
     String filePath = "/g/jspUpload/" + file_name;
     File file = new File(filePath);

@@ -64,8 +64,8 @@
 
         // items 생성
         sql = "INSERT INTO items " +
-                "(owner, file_id, file_name, original_name, file_size, owner_only, have_password, password) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "(owner, file_id, file_name, original_name, file_size, owner_only, password) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         st = conn.prepareStatement(sql);
         boolean noFile = true;
 
@@ -85,8 +85,7 @@
             st.setString(4, originalName);
             st.setLong(5, fileSize);
             st.setBoolean(6, ckFileAuth);
-            st.setBoolean(7, ckFilePassword);
-            st.setString(8, txtFilePasswordEncrypted);
+            st.setString(7, txtFilePasswordEncrypted);
             st.addBatch();
 
             noFile = false;
