@@ -25,25 +25,25 @@
         response.setStatus(400);
         return;
     }
-    long fileKey = Long.parseLong(q);
+    int fileKey = Integer.parseInt(q);
     String pw = request.getParameter("pw"); // 유저 비밀번호가 아니라 파일 비밀번호임
-    String pw_enc = Encryption.sha256(pw);
+    String pw_enc = pw == null ? null : Encryption.sha256(pw);
 
     // DB에서 q로 검색
     String original_name = null;
     String file_name = null;
-    long owner = -1;
+    int owner = -1;
     boolean owner_only = false;
     String password = null;
     try (Connection conn = DBConn.getConnection()) {
-        String sql = "select original_name, file_name, owner, owner_only, password from items where _id = ?";
+        String sql = "SELECT original_name, file_name, owner, owner_only FROM items WHERE _id = ?";
         PreparedStatement st = conn.prepareStatement(sql);
-        st.setLong(1, fileKey);
+        st.setInt(1, fileKey);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
             original_name = rs.getString("original_name");
             file_name = rs.getString("file_name");
-            owner = rs.getLong("owner");
+            owner = rs.getInt("owner");
             if (rs.wasNull()) owner = -1;
             owner_only = rs.getBoolean("owner_only");
             password = rs.getString("password");

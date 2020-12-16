@@ -7,29 +7,33 @@
 <%@ page import="java.sql.SQLException" %>
 <%
     String q = request.getParameter("q");
+    Object uid_ = session.getAttribute("_id");
+    int uid = uid_ != null ? (int) uid_ : -1;
 
-    ArrayList<Integer> fileCodes = new ArrayList<>();
+    ArrayList<Integer> fileKeys = new ArrayList<>();
+    ArrayList<String> fileCodes = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileOriginalNames = new ArrayList<>();
-    ArrayList<Long> fileSizes = new ArrayList<>();
+    ArrayList<Integer> fileSizes = new ArrayList<>();
 
     // DB에서 파일 키 q에 해당하는 파일들 검색
     try (Connection conn = DBConn.getConnection()) {
-        PreparedStatement st = null;
-        st = conn.prepareStatement(
-                "select a._id, a.file_name, a.original_name, a.file_size " +
-                        "from items as a " +
-                        "left join file_id as b on a.file_id = b._id " +
-                        "where b.name = ? " +
-                        "order by a.original_name ");
+        String sql = "SELECT a._id, a.file_name, a.original_name, a.file_size " +
+                "FROM items AS a " +
+                "LEFT JOIN file_id AS b ON a.file_id = b._id " +
+                "WHERE b.name = ? AND (NOT a.owner_only OR (a.owner_only AND a.owner = ?)) " +
+                "ORDER BY a.original_name ";
+        PreparedStatement st = conn.prepareStatement(sql);
         st.setString(1, q);
+        st.setInt(2, uid);
         ResultSet rs = st.executeQuery();
 
         while (rs.next()) {
-            fileCodes.add(rs.getInt("_id"));
+            fileKeys.add(rs.getInt("_id"));
+            fileCodes.add(q);
             fileNames.add(rs.getString("file_name"));
             fileOriginalNames.add(rs.getString("original_name"));
-            fileSizes.add(rs.getLong("file_size"));
+            fileSizes.add(rs.getInt("file_size"));
         }
     } catch (SQLException throwables) {
         throwables.printStackTrace();
@@ -44,6 +48,8 @@
         session.removeAttribute("upload");
         uploadSucceededClass = "";
     }
+
+    boolean onlyOneFile = fileCodes.size() == 1;
 %>
 
 <html>
@@ -71,9 +77,14 @@
         </div>
     </div>
     <div class="pb-2">
-        <h2>File Key: <%=q%></h2>
+        <h2>File Key: <%=q%>
+        </h2>
     </div>
+    <% if (onlyOneFile) { %>
+    <%@ include file="singleFileView.jsp" %>
+    <% } else { %>
     <%@ include file="fileTableView.jsp" %>
+    <% } %>
     <% } else { %>
     <%-- =========================================== --%>
     <%--             파일이 없는 경우                    --%>

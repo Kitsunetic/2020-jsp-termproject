@@ -16,24 +16,24 @@
         return;
     }
 
-    long file_id = Long.parseLong(q);
+    int file_id = Integer.parseInt(q);
 
     // DB에서 q로 검색
     String file_name = null;
-    long file_key = -1, key_count = -1, owner = -1;
+    int file_key = -1, key_count = -1, owner = -1;
     try (Connection conn = DBConn.getConnection()) {
         // 지정된 키와 같은 파일 찾기
         String sql = "SELECT file_name, file_id, owner, " +
                 "(SELECT COUNT(*) FROM file_id AS b WHERE b._id = a.file_id) AS key_count " +
                 "FROM items AS a WHERE a._id = ?";
         PreparedStatement st = conn.prepareStatement(sql);
-        st.setLong(1, file_id);
+        st.setInt(1, file_id);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
             file_name = rs.getString("file_name");
-            file_key = rs.getLong("file_id");
-            key_count = rs.getLong("key_count");
-            owner = rs.getLong("owner");
+            file_key = rs.getInt("file_id");
+            key_count = rs.getInt("key_count");
+            owner = rs.getInt("owner");
             if (rs.wasNull()) owner = -1;
         } else {
             response.setStatus(404);
@@ -45,7 +45,7 @@
         if (owner != -1) {
             Object uid_ = session.getAttribute("_id");
             if (uid_ != null) {
-                Long uid = (Long) uid_;
+                int uid = (int) uid_;
                 if (uid != owner) {
                     response.setStatus(401); // Unauthorized access
                     return;

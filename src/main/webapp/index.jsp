@@ -10,6 +10,7 @@
     boolean alreadyLoggedIn = session.getAttribute("_id") != null;
     int _id = -1;
     int numFiles = -1;
+    ArrayList<Integer> fileKeys = new ArrayList<>();
     ArrayList<String> fileCodes = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileOriginalNames = new ArrayList<>();
@@ -18,14 +19,16 @@
     if (alreadyLoggedIn) {
         _id = Integer.parseInt((String) session.getAttribute("_id"));
         try (Connection conn = DBConn.getConnection()) {
-            String sql = "select file_name, original_name, file_size, fi.name as file_code from items as i " +
-                    "left join file_id as fi on i.file_id = fi._id " +
-                    "where owner = ? " +
-                    "order by original_name";
+            String sql = "SELECT _id, file_name, original_name, file_size, fi.name AS file_code " +
+                    "FROM items AS i " +
+                    "LEFT JOIN file_id AS fi ON i.file_id = fi._id " +
+                    "WHERE owner = ? " +
+                    "ORDER BY original_name";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, _id);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                fileKeys.add(rs.getInt("_id"));
                 fileCodes.add(rs.getString("file_code"));
                 fileNames.add(rs.getString("file_name"));
                 fileOriginalNames.add(rs.getString("original_name"));
@@ -36,6 +39,8 @@
             throwables.printStackTrace();
         }
     }
+
+    boolean onlyOneFile = fileCodes.size() == 1;
 %>
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -69,6 +74,7 @@
 <% } else { %>
 <div style="height: 25vh"></div>
 <% } %>
+
 
 <!-- Upload Form -->
 <div class="container" style="max-width: 700px">
@@ -109,12 +115,18 @@
     </form>
 </div>
 
+
 <% if (alreadyLoggedIn && numFiles >= 1) { %>
 <div class="py-5"></div>
 <div class="container">
+    <% if (onlyOneFile) { %>
+    <%@include file="singleFileView.jsp" %>
+    <% } else { %>
     <%@include file="fileTableView.jsp" %>
+    <% } %>
 </div>
 <% }%>
+
 
 <script>
     $(document).ready(function () {
