@@ -54,7 +54,7 @@
         }
 
         // 찾은 파일이 있으면 DB 삭제
-        sql = "delete from items where _id = ?";
+        sql = "DELETE FROM items WHERE _id = ?";
         st = conn.prepareStatement(sql);
         st.setLong(1, file_id);
         st.executeUpdate();
@@ -62,7 +62,7 @@
 
         // 키가 하나 뿐이었으면 키도 삭제
         if (key_count == 1) {
-            sql = "delete from file_id where _id = ?";
+            sql = "DELETE FROM file_id WHERE _id = ?";
             st = conn.prepareStatement(sql);
             st.setLong(1, file_key);
             st.executeUpdate();

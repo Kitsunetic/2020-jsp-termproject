@@ -64,11 +64,10 @@
     // 비밀번호 체크
     if (password != null) {
         if (pw == null) {
-            // 비밀번호가 있는데, 입력이 안됐으면 비밀번호 입력 페이지로 redirect
-            response.sendRedirect("../filePasswordInputForm.jsp?q=" + q);
+            response.setStatus(403);
             return;
         } else if (!password.equals(pw_enc)) {
-            response.setStatus(403);
+            response.setStatus(401);
             return;
         }
     }
@@ -84,7 +83,7 @@
         // owner가 다름
         int currentUser = Integer.parseInt((String) currentUser_);
         if (owner != -1 && owner != currentUser) {
-            response.setStatus(403);
+            response.setStatus(401);
             return;
         }
     }
