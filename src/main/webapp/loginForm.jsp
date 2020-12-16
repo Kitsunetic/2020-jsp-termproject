@@ -42,36 +42,40 @@
 </div>
 
 <script>
-    const loginReaction = function (e, xhr, settings) {
-        switch (e.status) {
-            case 200:
-                document.location.href = './index.jsp'
-                break
-            case 401:
-                alert('잘못된 아이디나 비밀번호 입니다.')
-                break
-            default:
-                console.log('Status code:', e.status)
-                document.location.href = './sorry.jsp'
+    $(document).ready(function () {
+        const loginReaction = function (e, xhr, settings) {
+            switch (e.status) {
+                case 200:
+                    document.location.href = './index.jsp'
+                    break
+                case 401:
+                    alert('잘못된 아이디나 비밀번호 입니다.')
+                    break
+                default:
+                    console.log('Status code:', e.status)
+                    document.location.href = './sorry.jsp'
+            }
         }
-    }
-    $('#btn-login').click(function () {
-        let formData = {
-            id: $('#login').val(),
-            pw: $('#password').val()
-        }
-        $.ajax({
-            url: './api/login.jsp',
-            type: 'POST',
-            data: formData,
-            complete: loginReaction
+        $('#btn-login').click(function () {
+            let formData = {
+                id: $('#login').val(),
+                pw: $('#password').val()
+            }
+            $.ajax({
+                url: './api/login.jsp',
+                type: 'POST',
+                data: formData,
+                complete: loginReaction
+            })
         })
-    })
-    $('#login').on('keypress', function (e) {
-        if (e.which === 13) document.getElementById('password').focus()
-    })
-    $('#password').on('keypress', function (e) {
-        if (e.which === 13) document.getElementById('btn-login').click()
+
+
+        $('#login').on('keypress', function (e) {
+            if (e.which === 13) document.getElementById('password').focus()
+        })
+        $('#password').on('keypress', function (e) {
+            if (e.which === 13) document.getElementById('btn-login').click()
+        })
     })
 </script>
 

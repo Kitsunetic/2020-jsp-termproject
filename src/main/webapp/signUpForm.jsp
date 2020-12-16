@@ -56,21 +56,22 @@
 </div>
 
 <script>
-    const onPasswordChanged = function () {
-        let pw1 = $('#txt-pw').val()
-        let pw2 = $('#txt-pw2').val()
-        let pwAlert = $('#pw-alert')
-        if (pw1 !== pw2 && pw2) {
-            if (!pwAlert.hasClass('show'))
-                pwAlert.addClass('show')
-        } else if (pwAlert.hasClass('show')) {
-            pwAlert.removeClass('show')
-        }
-    }
-    $('#txt-pw').change(onPasswordChanged)
-    $('#txt-pw2').change(onPasswordChanged)
-
     $(document).ready(function () {
+        const onPasswordChanged = function () {
+            let pw1 = $('#txt-pw').val()
+            let pw2 = $('#txt-pw2').val()
+            let pwAlert = $('#pw-alert')
+            if (pw1 !== pw2 && pw2) {
+                if (!pwAlert.hasClass('show'))
+                    pwAlert.addClass('show')
+            } else if (pwAlert.hasClass('show')) {
+                pwAlert.removeClass('show')
+            }
+        }
+        $('#txt-pw').change(onPasswordChanged)
+        $('#txt-pw2').change(onPasswordChanged)
+
+
         const submitReaction = function (e, xhr, settings) {
             switch (e.status) {
                 case 200:
