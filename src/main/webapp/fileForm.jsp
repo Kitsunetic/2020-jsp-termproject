@@ -8,17 +8,18 @@
 <%
     String q = request.getParameter("q");
     Object uid_ = session.getAttribute("_id");
-    int uid = uid_ != null ? (int) uid_ : -1;
+    int uid = uid_ != null ? Integer.parseInt((String) uid_) : -1;
 
     ArrayList<Integer> fileKeys = new ArrayList<>();
     ArrayList<String> fileCodes = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileOriginalNames = new ArrayList<>();
     ArrayList<Integer> fileSizes = new ArrayList<>();
+    ArrayList<Boolean> fileHavePasswords = new ArrayList<>();
 
     // DB에서 파일 키 q에 해당하는 파일들 검색
     try (Connection conn = DBConn.getConnection()) {
-        String sql = "SELECT a._id, a.file_name, a.original_name, a.file_size " +
+        String sql = "SELECT a._id, a.file_name, a.original_name, a.file_size, a.password " +
                 "FROM items AS a " +
                 "LEFT JOIN file_id AS b ON a.file_id = b._id " +
                 "WHERE b.name = ? AND (NOT a.owner_only OR (a.owner_only AND a.owner = ?)) " +
@@ -34,6 +35,7 @@
             fileNames.add(rs.getString("file_name"));
             fileOriginalNames.add(rs.getString("original_name"));
             fileSizes.add(rs.getInt("file_size"));
+            fileHavePasswords.add(rs.getString("password") != null);
         }
     } catch (SQLException throwables) {
         throwables.printStackTrace();

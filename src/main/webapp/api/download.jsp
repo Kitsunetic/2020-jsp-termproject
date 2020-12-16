@@ -36,7 +36,7 @@
     boolean owner_only = false;
     String password = null;
     try (Connection conn = DBConn.getConnection()) {
-        String sql = "SELECT original_name, file_name, owner, owner_only FROM items WHERE _id = ?";
+        String sql = "SELECT original_name, file_name, owner, owner_only, password FROM items WHERE _id = ?";
         PreparedStatement st = conn.prepareStatement(sql);
         st.setInt(1, fileKey);
         ResultSet rs = st.executeQuery();
@@ -62,9 +62,15 @@
     }
 
     // 비밀번호 체크
-    if (password != null && !password.equals(pw_enc)) {
-        response.setStatus(403);
-        return;
+    if (password != null) {
+        if (pw == null) {
+            // 비밀번호가 있는데, 입력이 안됐으면 비밀번호 입력 페이지로 redirect
+            response.sendRedirect("../filePasswordInputForm.jsp?q=" + q);
+            return;
+        } else if (!password.equals(pw_enc)) {
+            response.setStatus(403);
+            return;
+        }
     }
 
     // owner 체크
@@ -76,7 +82,7 @@
         }
 
         // owner가 다름
-        long currentUser = (Long) currentUser_;
+        int currentUser = Integer.parseInt((String) currentUser_);
         if (owner != -1 && owner != currentUser) {
             response.setStatus(403);
             return;

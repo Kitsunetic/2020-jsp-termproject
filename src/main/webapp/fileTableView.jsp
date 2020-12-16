@@ -5,7 +5,7 @@ Requirements:
     - fileOriginalNames (ArrayList<String>)
     - fileNames (ArrayList<String>)
     - fileSizes (ArrayList<Integer>)
-    - showImageWhenEmpty (boolean)
+    - fileHavePasswords (ArrayList<Boolean>)
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="utils.StringUtils" %>
@@ -38,7 +38,8 @@ Requirements:
     <% for (int i = 0; i < fileKeys.size(); i++) { %>
     <tr id="item-<%=fileKeys.get(i)%>">
         <th>
-            <a href="api/download.jsp?q=<%=fileKeys.get(i)%>" style="color: black">
+            <a href="<%=fileHavePasswords.get(i) ? "filePasswordInputForm.jsp?q=" : "api/download.jsp?q="%><%=fileKeys.get(i)%>"
+               target="_blank" style="color: black">
                 <%=fileOriginalNames.get(i)%>
             </a>
         </th>
@@ -68,40 +69,41 @@ Requirements:
         let host = window.location.hostname
         let port = window.location.port
         let qr = $('.qr')
-        qr.each(function (index, item) {
-            let filfId = item.getAttribute('file-id')
-            let url = 'http://' + host + ':' + port + '/demo_war/api/download.jsp?q=' + filfId
+        qr.each(function (i, item) {
+            let fileId = item.getAttribute('file-id')
+            let url = 'http://' + host + ':' + port + '/demo_war/api/download.jsp?q=' + fileId
             item.setAttribute('title', '<img src="api/getQR.jsp?q=' + url + '" />')
         })
-
         qr.tooltip({
             animated: 'fade',
             placement: 'left',
             html: true
         })
-    })
 
-    $('.btn-delete').click(function () {
-        let code = $(this).attr('code')
-        let url = './api/delete.jsp?q=' + code
-        console.log(url)
 
-        $.ajax({
-            url: url,
-            statusCode: {
-                200: function () {
+        const onBtnDeleteClick = function (e, xhr, settings) {
+            switch (e.status) {
+                case 200:
                     // 파일을 목록에서 제거
                     $('#item-' + code).remove()
-                },
-                401: function () {
+                    break
+                case 401:
                     // 오류 메세지
                     alert("파일의 주인만 파일을 삭제할 수 있습니다!!")
-                },
-                500: function () {
-                    // 오류 메세지
+                    break
+                default:
                     alert("내부 오류")
-                }
             }
+        }
+        $('.btn-delete').click(function () {
+            let code = $(this).attr('code')
+            let url = './api/delete.jsp?q=' + code
+            console.log(url)
+
+            $.ajax({
+                url: url,
+                complete: onBtnDeleteClick
+            })
         })
     })
 </script>

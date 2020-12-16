@@ -27,7 +27,11 @@
     boolean ckFileAuth = multi.getParameter("ck-file-auth") != null;
     boolean ckFilePassword = multi.getParameter("ck-file-password") != null;
     String txtFilePassword = multi.getParameter("txt-file-password");
-    String txtFilePasswordEncrypted = ckFilePassword ? Encryption.sha256(txtFilePassword) : null;
+    String txtFilePasswordEncrypted = ckFilePassword && txtFilePassword != null ? Encryption.sha256(txtFilePassword) : null;
+    System.out.print("ckFilePassword: ");
+    System.out.println(ckFilePassword);
+    System.out.print("txtFilePassword: ");
+    System.out.println(txtFilePassword);
 
     Object s_user_id = session.getAttribute("_id");
     int user_id = -1;
@@ -45,10 +49,7 @@
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
             _id = rs.getInt(1);
-        }
-
-        // file_id 생성
-        if (_id != -1) {
+        } else {
             sql = "INSERT INTO file_id (name) VALUES (?)";
             st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setString(1, file_id);

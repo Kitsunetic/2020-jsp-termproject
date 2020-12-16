@@ -15,11 +15,12 @@
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileOriginalNames = new ArrayList<>();
     ArrayList<Integer> fileSizes = new ArrayList<>();
+    ArrayList<Boolean> fileHavePasswords = new ArrayList<>();
 
     if (alreadyLoggedIn) {
         _id = Integer.parseInt((String) session.getAttribute("_id"));
         try (Connection conn = DBConn.getConnection()) {
-            String sql = "SELECT _id, file_name, original_name, file_size, fi.name AS file_code " +
+            String sql = "SELECT i._id, i.file_name, i.original_name, i.file_size, i.password, fi.name AS file_code " +
                     "FROM items AS i " +
                     "LEFT JOIN file_id AS fi ON i.file_id = fi._id " +
                     "WHERE owner = ? " +
@@ -33,14 +34,13 @@
                 fileNames.add(rs.getString("file_name"));
                 fileOriginalNames.add(rs.getString("original_name"));
                 fileSizes.add(rs.getInt("file_size"));
+                fileHavePasswords.add(rs.getString("password") != null);
             }
             numFiles = fileNames.size();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
-
-    boolean onlyOneFile = fileCodes.size() == 1;
 %>
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,6 +87,21 @@
         </div>
 
         <div class="float-right pt-2 pb-4">
+            <div class="input-group pb-2 float-right" style="max-width: 500px">
+                <% if (alreadyLoggedIn) { %>
+                <input type="checkbox" class="form-check-inline"
+                       name="ck-file-auth" id="ck-file-auth" value="ckFileAuth">
+                <label class="form-check-label" for="ck-file-auth">나만 볼 수 있음</label>
+                &nbsp;&nbsp;
+                <% } %>
+                <input type="checkbox" class="form-check-inline"
+                       name="ck-file-password" id="ck-file-password" value="ckFilePassword">
+                <label class="form-check-label" for="ck-file-password">파일 비밀번호 설정</label>
+                &nbsp;&nbsp;
+                <input type="password" class="form-control" maxlength="128" placeholder="비밀번호"
+                       name="txt-file-password" id="txt-file-password" disabled>
+            </div>
+
             <div class="input-group float-right" style="max-width: 300px">
                 <input type="text" class="form-control" name="file_id"
                        placeholder="파일 접근 키" maxlength="36">
@@ -94,23 +109,6 @@
                     <input type="submit" id="upload-button" class="btn btn-outline-secondary" value="파일 업로드">
                 </div>
             </div>
-
-            <% if (alreadyLoggedIn) {
-                // Only for users logged in
-            %>
-            <div class="input-group pt-2 float-right" style="max-width: 500px">
-                <input type="checkbox" class="form-check-inline"
-                       name="ck-file-auth" id="ck-file-auth" value="ckFileAuth">
-                <label class="form-check-label" for="ck-file-auth">나만 볼 수 있음</label>
-                &nbsp;&nbsp;
-                <input type="checkbox" class="form-check-inline"
-                       name="ck-file-password" id="ck-file-password" value="ckFilePassword">
-                <label class="form-check-label" for="ck-file-password">파일 비밀번호 설정</label>
-                &nbsp;&nbsp;
-                <input type="password" class="form-control" maxlength="128"
-                       placeholder="비밀번호" id="txt-file-password" disabled>
-            </div>
-            <% } %>
         </div>
     </form>
 </div>
@@ -119,11 +117,7 @@
 <% if (alreadyLoggedIn && numFiles >= 1) { %>
 <div class="py-5"></div>
 <div class="container">
-    <% if (onlyOneFile) { %>
-    <%@include file="singleFileView.jsp" %>
-    <% } else { %>
     <%@include file="fileTableView.jsp" %>
-    <% } %>
 </div>
 <% }%>
 

@@ -5,7 +5,7 @@ Requirements:
     - fileOriginalNames (ArrayList<String>)
     - fileNames (ArrayList<String>)
     - fileSizes (ArrayList<Integer>)
-    - showImageWhenEmpty (boolean)
+    - fileHavePasswords (ArrayList<Boolean>)
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="utils.StringUtils" %>
@@ -57,8 +57,13 @@ Requirements:
 <script>
     $(document).ready(function () {
         $('#btn-download').click(function () {
+            <% if (fileHavePasswords.get(0)) { %>
+            document.location.href = 'filePasswordInputForm.jsp?q=<%=fileKeys.get(0)%>'
+            <% } else { %>
             document.getElementById('downloader').src = 'api/download.jsp?q=<%=fileKeys.get(0)%>'
+            <% } %>
         })
+
         $('#btn-copy-url').click(function () {
             let txt = document.getElementById('txt-copy-url')
             txt.select()

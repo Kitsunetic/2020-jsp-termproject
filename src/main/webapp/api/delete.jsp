@@ -45,7 +45,7 @@
         if (owner != -1) {
             Object uid_ = session.getAttribute("_id");
             if (uid_ != null) {
-                int uid = (int) uid_;
+                int uid = Integer.parseInt((String) uid_);
                 if (uid != owner) {
                     response.setStatus(401); // Unauthorized access
                     return;
