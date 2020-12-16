@@ -5,7 +5,7 @@
 
 <%
     if (session.getAttribute("_id") != null) {
-        response.sendRedirect("index.jsp");
+        response.setStatus(400);
     }
 
     String nickname = request.getParameter("nickname");
@@ -21,12 +21,7 @@
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
-%>
-<script>
-    alert('이미 존재하는 아이디입니다!!')
-    document.location.href = '../index.jsp'
-</script>
-<%
+                response.setStatus(401);
                 return;
             }
         }
@@ -45,8 +40,6 @@
             session.setAttribute("_id", rs.getInt(1));
             session.setAttribute("nickname", nickname);
         }
-
-        response.sendRedirect("../index.jsp");
     } catch (SQLException throwables) {
         throwables.printStackTrace();
     }

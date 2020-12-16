@@ -22,23 +22,21 @@
     <div class="card bg-light">
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h4 class="card-title mt-3 text-center">로그인</h4>
-            <form id="form-login">
-                <div class="form-group input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
-                    </div>
-                    <input name="id" id="login" class="form-control" placeholder="아이디" type="text">
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
                 </div>
-                <div class="form-group input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                    </div>
-                    <input name="pw" id="password" class="form-control" placeholder="비밀번호" type="password">
+                <input name="id" id="login" class="form-control" placeholder="아이디" type="text">
+            </div>
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                 </div>
-                <div class="form-group">
-                    <button id="btn-login" type="button" class="btn btn-primary btn-block">로그인</button>
-                </div>
-            </form>
+                <input name="pw" id="password" class="form-control" placeholder="비밀번호" type="password">
+            </div>
+            <div class="form-group">
+                <button id="btn-login" type="button" class="btn btn-primary btn-block">로그인</button>
+            </div>
         </article>
     </div>
 </div>
@@ -62,8 +60,6 @@
             id: $('#login').val(),
             pw: $('#password').val()
         }
-        console.log(formData)
-
         $.ajax({
             url: './api/login.jsp',
             type: 'POST',
