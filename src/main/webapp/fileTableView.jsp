@@ -80,29 +80,29 @@ Requirements:
             html: true
         })
 
+        $('.btn-delete').each(function (i) {
+            $(this).click(function () {
+                let code = $(this).attr('code')
+                let url = './api/delete.jsp?q=' + code
+                console.log(url)
 
-        const onBtnDeleteClick = function (e, xhr, settings) {
-            switch (e.status) {
-                case 200:
-                    // 파일을 목록에서 제거
-                    $('#item-' + code).remove()
-                    break
-                case 401:
-                    // 오류 메세지
-                    alert("파일의 주인만 파일을 삭제할 수 있습니다!!")
-                    break
-                default:
-                    alert("내부 오류")
-            }
-        }
-        $('.btn-delete').click(function () {
-            let code = $(this).attr('code')
-            let url = './api/delete.jsp?q=' + code
-            console.log(url)
-
-            $.ajax({
-                url: url,
-                complete: onBtnDeleteClick
+                $.ajax({
+                    url: url,
+                    complete: function (e, xhr, settings) {
+                        switch (e.status) {
+                            case 200:
+                                // 파일을 목록에서 제거
+                                $('#item-' + code).remove()
+                                break
+                            case 401:
+                                // 오류 메세지
+                                alert("파일의 주인만 파일을 삭제할 수 있습니다!!")
+                                break
+                            default:
+                                alert("내부 오류")
+                        }
+                    }
+                })
             })
         })
     })

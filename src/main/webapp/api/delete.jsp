@@ -23,8 +23,8 @@
     int file_key = -1, key_count = -1, owner = -1;
     try (Connection conn = DBConn.getConnection()) {
         // 지정된 키와 같은 파일 찾기
-        String sql = "SELECT file_name, file_id, owner, " +
-                "(SELECT COUNT(*) FROM file_id AS b WHERE b._id = a.file_id) AS key_count " +
+        String sql = "SELECT a.file_name, a.file_id, a.owner, " +
+                "(SELECT COUNT(*) FROM items AS b WHERE b.file_id = a.file_id) AS key_count " +
                 "FROM items AS a WHERE a._id = ?";
         PreparedStatement st = conn.prepareStatement(sql);
         st.setInt(1, file_id);
@@ -54,6 +54,7 @@
         }
 
         // 찾은 파일이 있으면 DB 삭제
+        System.out.println("Delete items " + file_id);
         sql = "DELETE FROM items WHERE _id = ?";
         st = conn.prepareStatement(sql);
         st.setLong(1, file_id);
@@ -62,6 +63,7 @@
 
         // 키가 하나 뿐이었으면 키도 삭제
         if (key_count == 1) {
+            System.out.println("Delete key " + file_key);
             sql = "DELETE FROM file_id WHERE _id = ?";
             st = conn.prepareStatement(sql);
             st.setLong(1, file_key);

@@ -28,10 +28,6 @@
     boolean ckFilePassword = multi.getParameter("ck-file-password") != null;
     String txtFilePassword = multi.getParameter("txt-file-password");
     String txtFilePasswordEncrypted = ckFilePassword && txtFilePassword != null ? Encryption.sha256(txtFilePassword) : null;
-    System.out.print("ckFilePassword: ");
-    System.out.println(ckFilePassword);
-    System.out.print("txtFilePassword: ");
-    System.out.println(txtFilePassword);
 
     Object s_user_id = session.getAttribute("_id");
     int user_id = -1;

@@ -46,7 +46,7 @@
     <form action="api/download.jsp" method="post">
         <input type="hidden" name="q" value="<%=q%>">
         <div class="input-group">
-            <input type="password" class="form-control" placeholder="Password">
+            <input type="password" name="pw" class="form-control" placeholder="Password">
         </div>
         <div class="input-group float-right pt-1" style="max-width: 200px">
             <button type="submit" class="form-control btn btn-primary">Submit</button>
